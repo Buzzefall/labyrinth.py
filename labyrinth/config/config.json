@@ -1,0 +1,17 @@
+{
+  "cli": {
+    "input_types": ["ACTION", "CHOICE"],
+    "entry_types": ["Game", "Debug", "Player"]
+  },
+
+  "world": {
+    "height": 10,
+    "width": 10
+  },
+
+  "renderer": {
+    "tab_step": 8,
+    "width_ratio": 1.6,
+    "render_history_entries": 5
+  }
+}
