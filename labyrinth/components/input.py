@@ -1,5 +1,9 @@
-class InputComponent:
+from components.base import Component
+
+
+class InputComponent(Component):
     def __init__(self, source):
+        super().__init__()
         self.source = source
         self.state = None
 

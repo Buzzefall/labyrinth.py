@@ -1,4 +1,4 @@
-from core.enum import CellType
+from entities.enum import CellType
 
 
 class Cell:

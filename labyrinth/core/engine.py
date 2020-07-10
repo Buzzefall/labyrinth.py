@@ -1,4 +1,4 @@
-from core.world import GameWorld
+from entities.world import GameWorld
 from core.cli import CLI
 from core.renderer import Renderer
 
