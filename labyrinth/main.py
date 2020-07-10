@@ -2,10 +2,10 @@
 
 import os
 import json
-
 from pathlib import Path
 
 from core.engine import Engine
+
 
 if __name__ == '__main__':
     cfg_path = Path(f'{os.getcwd()}/config/config.json')

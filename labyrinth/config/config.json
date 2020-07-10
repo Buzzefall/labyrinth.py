@@ -12,6 +12,7 @@
   "renderer": {
     "tab_step": 8,
     "width_ratio": 1.6,
-    "render_history_entries": 5
+    "cli_history_trail": 5,
+    "world_history_trail": 5
   }
 }
