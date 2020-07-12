@@ -1,46 +1,64 @@
 import os
 
+from events.base import Listener, Event
+from events.events import EnteredCellEvent, LeftCellEvent, FacedWallEvent, FacedMonolithEvent
 
-class CLI:
+
+class CLI(Listener):
+    msg_prefixes = {
+        'player': 'Player >>> ',
+        'debug': 'DEBUG  >>> ',
+        'game': 'Game   >>> ',
+    }
 
     def __init__(self, config):
         self.config = config
         self.history = []
+        self.player_history = []
         self.debug_history = []
 
-    def debug(self, string):
-        message = {
-            'entry_type': 'Debug',
-            'message': f'DEBUG: {string}'
-        }
+    def get_player_input(self, input_type: str):
+        player_input = input("Enter: ").lower()
+        new_entry = CLI.msg_prefixes['player'] + player_input
 
+        self.history.append(new_entry)
+        self.player_history.append(new_entry)
+
+        if input_type == 'command':
+            if player_input in self.config['cli']['commands']:
+                return player_input
+            else:
+                self.add_event_message('wrong_command', 'Try again.')
+                return None
+
+        elif input_type == 'dimensions':
+            numbers = player_input.split()
+            try:
+                if len(numbers) != 2:
+                    raise ValueError
+
+                numbers = int(numbers[0]), int(numbers[1])
+                if numbers[0] < 4 or numbers[0] > 10 or numbers[1] < 4 or numbers[1] > 10:
+                    self.add_event_message('wrong_dimensions')
+
+                return numbers
+
+            except ValueError:
+                self.add_event_message('wrong_input', 'What are you doing??')
+                return None
+
+    def add_event_message(self, event_name: str, message: str = ''):
+        self.history.append(CLI.msg_prefixes['game'] + self.config['cli']['messages'][event_name] + message)
+
+    def add_message(self, message: str):
+        self.history.append(CLI.msg_prefixes['game'] + message)
+
+    def receive(self, event: Event):
+        if event.name not in (LeftCellEvent.__name__, ):
+            self.add_event_message(event.name, f'Location: ({event.target.x}, {event.target.y})')
+
+    def debug(self, string):
+        message = CLI.msg_prefixes['debug'] + string
         self.history.append(message)
         self.debug_history.append(message)
 
-    def get_player_input(self, input_type: str) -> str:
-        input_type = input_type.upper()
-        try:
-            assert input_type in self.config['input_types']
-        except AssertionError:
-            self.debug(f'Wrong player input type, assuming on of: {self.input_types}')
-            return 'ERROR'
-
-        self.history.append(f'What is your {input_type}?')
-        self.render()
-
-        player_input = input()
-        player_input = player_input[0].upper() + player_input[1:]
-        self.player_history[input_type].append(player_input)
-
-        self.history.append(f'{input_type}: {player_input}')
-        self.render()
-
-        return player_input
-
-    def get_history(self, n_lines: int):
-        return self.history
-
-    def render(self):
-        os.system(['clear', 'cls'][os.name == 'nt'])
-        for line in self.get_history(5):
-            print(line)

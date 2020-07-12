@@ -1,18 +1,40 @@
 {
   "cli": {
-    "input_types": ["ACTION", "CHOICE"],
-    "entry_types": ["Game", "Debug", "Player"]
+    "input_types": ["dimensions", "command"],
+    "commands": ["left", "right", "up", "down", "skip turn", "save", "exit"],
+    "messages": {
+      "move": "Step executed. Entered cell ",
+      "skip": "Skipped a turn. ",
+      "wormhole": "Step executed, wormhole. ",
+      "treasure": "Step executed, treasure. ",
+      "choose_command": "What's next? ",
+      "wrong_command": "Wrong command! ",
+      "choose_dimensions": "To create new world, input dimensions as X Y. ",
+      "wrong_dimensions": "Wrong dimensions! Valid sizes are from 4 to 10. ",
+      "wrong_input": "Wrong input! ",
+      "WorldCreated": "And so New World begins... ",
+      "EnteredCellEvent": "Player entered cell. ",
+      "LeftCellEvent": "Player left cell. ",
+      "FacedMonolithEvent": "You shall not pass through this MONOLITH! ",
+      "FacedWallEvent": "You shall not pass through this WALL! ",
+      "SkipTurnEvent": "Turn skipped. ",
+      "TreasureFound": "You shall not pass through this WALL! "
+    }
   },
 
   "world": {
-    "height": 10,
-    "width": 10
+    "height": 1,
+    "width": 1
   },
 
   "renderer": {
     "tab_step": 8,
-    "width_ratio": 1.6,
-    "cli_history_trail": 5,
-    "world_history_trail": 5
+    "width_ratio": 0.5,
+    "cli_history_trail": 11
+  },
+
+  "paths": {
+    "saves": "saves",
+    "test_map": "saves/test_map.json"
   }
 }

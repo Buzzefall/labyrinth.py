@@ -4,6 +4,7 @@ from uuid import uuid4
 class Entity:
     def __init__(self):
         self.id = uuid4().int
+        self.name = ''
         self.components = {}
 
     def add_component(self, component):
