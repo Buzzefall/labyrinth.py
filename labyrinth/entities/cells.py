@@ -39,6 +39,16 @@ class Cell(Entity, Listener):
 
         return None
 
+    def find_treasure(self):
+        def is_treasure(obj):
+            return type(obj).__name__ == 'Treasure'
+
+        for e in self.entities:
+            if is_treasure(e):
+                return e
+
+        return None
+
     def receive(self, event: Event):
         if isinstance(event, EnteredCellEvent):
             self.add_entity(event.source)
@@ -52,8 +62,11 @@ class Cell(Entity, Listener):
             return "# "
         elif self.find_player():
             return "℗ "
+        elif self.find_treasure():
+            return "⌛"
         elif self.type == CellType.Empty:
             return "  "
+#  ҉
 
 # class EmptyCell(Cell):
 #     def __init__(self, x: int, y: int):

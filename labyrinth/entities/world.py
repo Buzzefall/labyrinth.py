@@ -3,13 +3,17 @@ import os
 
 import pickle
 import random
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Union
 
+from common.base import Singleton
+from core.cli import CLI
 from entities.enum import CellType, Direction
 from entities.cells import Cell
 from entities.player import Player
+from entities.treasure import Treasure
 
 
 class GameWorld:
@@ -17,42 +21,57 @@ class GameWorld:
         self.config = config
         self.cells = cells
         self.player = None
-        # self.history = []
+        self.treasure = None
 
         self.populate_entities()
 
-    # TODO: Add Player and other entities to Labyrinth
     def populate_entities(self):
         empty_cells = [cell for row in self.cells for cell in row if cell.type == CellType.Empty]
 
         player_spawn = random.choice(empty_cells)
         self.player = Player('Noname', player_spawn)
         player_spawn.add_entity(self.player)
+        empty_cells.remove(player_spawn)
+
+        treasure_spawn = random.choice(empty_cells)
+        self.treasure = Treasure(treasure_spawn)
+        treasure_spawn.add_entity(self.treasure)
+        empty_cells.remove(treasure_spawn)
 
 
-class WorldManager:
-    def __init__(self, config):
+# noinspection PyAttributeOutsideInit
+class WorldManager(Singleton):
+    def init(self, config):
+        random.seed()
+
         self.config = config
         self.width = config['world']['width']
         self.height = config['world']['height']
-        self.cells = []
-        self.world = None
-        # DEBUG BEGIN
-        # self.renderer = renderer
-        # DEBUG END
 
-        random.seed()
+        CLI().add_event_message('InitWorldManager')
+
+        self.cells = self.generate_empty()
+        self.world = self.generate()
 
     def save(self):
         if self.world is None:
             return
 
         dt = datetime.today()
-        save_name = f'Labyrinth - {str(dt)}.save'
+        save_name = f'Labyrinth - {str(dt)}.pickle'
         file = f"{os.getcwd()}/{self.config['paths']['saves']}/{save_name}"
 
-        with open(file) as save_file:
-            pickle.dump(self.cells, save_file)
+        with open(file, 'wb') as save_file:
+            recursion_limit = 0
+            success = False
+            while not success:
+                try:
+                    pickle.dump(self.cells, save_file)
+                    CLI().add_message(f'Saved map with recursion limit {recursion_limit}')
+                    success = True
+                except RecursionError:
+                    recursion_limit += 1000
+                    sys.setrecursionlimit(recursion_limit)
 
     def load(self, save_name: Union[str, Path]):
         if not save_name:
@@ -198,5 +217,11 @@ class WorldManager:
             WorldManager.explode(cells[y][x], random.randint(1, len(cells)) // 2)
 
         self.world = GameWorld(self.config, cells)
-
         return self.world
+
+    def get(self):
+        if self.world is not None:
+            return self.world
+        else:
+            self.world = self.generate()
+            return self.world

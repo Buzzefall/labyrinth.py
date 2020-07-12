@@ -27,3 +27,8 @@ class FacedMonolithEvent(Event):
 class FacedWallEvent(Event):
     def __init__(self, source: Union[Entity, None], target: Union[Entity, None]):
         super().__init__(source, target)
+
+
+class TreasureFoundEvent(Event):
+    def __init__(self, source: Union[Entity, None], target: Union[Entity, None]):
+        super().__init__(source, target)

@@ -1,46 +1,49 @@
+from common.base import Singleton
 from core.cli import CLI
 from entities.cells import Cell
 from entities.enum import CellType
-from entities.world import GameWorld
+from entities.world import GameWorld, WorldManager
 from events.events import FacedWallEvent, FacedMonolithEvent
 from events.system import EventSystem
 
 
-class CommandProcessor:
-    def __init__(self, world: GameWorld, eventsys: EventSystem, cli: CLI):
-        self.world = world
-        self.eventsys = eventsys
-        self.cli = cli
+# noinspection PyAttributeOutsideInit
+class CommandProcessor(Singleton):
+    def init(self, config):
+        self.config = config
+        CLI().add_event_message('InitCommandProcessor')
 
-    def can_move_to(self, destination: Cell):
-        player = self.world.player
+    @staticmethod
+    def can_move_to(destination: Cell):
+        player = WorldManager().get().player
 
         if destination is not None:
             if destination.type == CellType.Empty:
                 return True
             elif destination.type == CellType.Wall:
-                self.eventsys.register(FacedWallEvent(player, player.cell))
+                EventSystem().register(FacedWallEvent(player, player.cell))
             elif destination.type == CellType.Monolith:
-                self.eventsys.register(FacedMonolithEvent(player, player.cell))
+                EventSystem().register(FacedMonolithEvent(player, player.cell))
 
         return False
 
-    def is_valid(self, command: str) -> bool:
-        player = self.world.player
+    @staticmethod
+    def is_valid(command: str) -> bool:
+        player = WorldManager().get().player
 
         if command == 'left':
-            return self.can_move_to(player.cell.left)
+            return CommandProcessor.can_move_to(player.cell.left)
 
         elif command == 'right':
-            return self.can_move_to(player.cell.right)
+            return CommandProcessor.can_move_to(player.cell.right)
 
         elif command == 'up':
-            return self.can_move_to(player.cell.up)
+            return CommandProcessor.can_move_to(player.cell.up)
 
         elif command == 'down':
-            return self.can_move_to(player.cell.down)
+            return CommandProcessor.can_move_to(player.cell.down)
 
-        elif command == 'skip turn':
+        elif command == 'skip':
             pass
         elif command == 'save':
             pass

@@ -1,21 +1,24 @@
 import os
 
+from common.base import Singleton
 from events.base import Listener, Event
 from events.events import EnteredCellEvent, LeftCellEvent, FacedWallEvent, FacedMonolithEvent
 
 
-class CLI(Listener):
+# noinspection PyAttributeOutsideInit
+class CLI(Singleton, Listener):
     msg_prefixes = {
         'player': 'Player >>> ',
         'debug': 'DEBUG  >>> ',
         'game': 'Game   >>> ',
     }
 
-    def __init__(self, config):
+    def init(self, config):
         self.config = config
         self.history = []
         self.player_history = []
         self.debug_history = []
+        self.add_event_message('InitCLI')
 
     def get_player_input(self, input_type: str):
         player_input = input("Enter: ").lower()

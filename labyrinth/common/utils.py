@@ -36,6 +36,6 @@ def wrap_string(string: str, max_length: int):
         first, second = string[:max_length], string[max_length:]
 
     if len(second) > max_length:
-        return first + "\n" + Helper.wrap_string(second, max_length)
+        return first + "\n" + wrap_string(second, max_length)
     else:
         return first + "\n" + second
