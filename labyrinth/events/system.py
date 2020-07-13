@@ -37,5 +37,6 @@ class EventSystem(Singleton):
                 if lr is event.target:
                     lr.receive(event)
 
+            # Broadcast event messages
             CLI().receive(event)
 

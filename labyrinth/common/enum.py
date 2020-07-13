@@ -19,6 +19,7 @@ class Direction(Enum):
     def all():
         return [Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN]
 
+
 @unique
 class EntityTypes(Enum):
     NONE = 0

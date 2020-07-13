@@ -1,5 +1,5 @@
 from entities.base import Entity
-from entities.cells import Cell
+from entities.cell import Cell
 # from events.base import Event
 # from events.events import EnteredCellEvent
 

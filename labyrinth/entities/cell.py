@@ -1,8 +1,9 @@
-from entities.enum import CellType
+from common.enum import CellType
 from entities.base import Entity
 
 from events.base import Listener, Event
-from events.events import EnteredCellEvent, LeftCellEvent
+from events.events import EnteredCellEvent, LeftCellEvent, TreasureFoundEvent
+from events.system import EventSystem
 
 
 class Cell(Entity, Listener):
@@ -51,9 +52,8 @@ class Cell(Entity, Listener):
         return None
 
     def reveal(self):
-        l, r, u, p = self.left, self.right, self.up, self.down
         self.visible = True
-
+        l, r, u, p = self.left, self.right, self.up, self.down
         for neighbour in (l, r, u, p, l.up, l.down, r.up, r.down):
             neighbour.visible = True
 
@@ -61,14 +61,9 @@ class Cell(Entity, Listener):
         if isinstance(event, EnteredCellEvent):
             player = event.source
             self.add_entity(player)
-
-            treasure = self.find_treasure()
-            if treasure is not None:
-                player.inventory.add(treasure)
-                self.entities.remove(treasure)
-
             self.reveal()
-        elif isinstance(event, LeftCellEvent):
+
+        elif isinstance(event, (LeftCellEvent, TreasureFoundEvent)):
             self.remove_entity(event.source)
 
     def __str__(self):

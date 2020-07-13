@@ -27,7 +27,7 @@
       "FacedMonolithEvent": "You shall not pass through this MONOLITH! ",
       "FacedWallEvent": "You shall not pass through this WALL! ",
       "SkipTurnEvent": "Turn skipped. ",
-      "TreasureFound": "You've found the treasure! "
+      "TreasureFoundEvent": "You've found the treasure! "
     }
   },
 

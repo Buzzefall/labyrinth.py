@@ -4,11 +4,12 @@ from core.cli import CLI
 from core.processor import CommandProcessor
 from core.rendering import Renderer
 
-from entities.enum import Direction, CellType
-from entities.world import WorldManager
+from common.enum import Direction, CellType
+from core.manager import WorldManager
 
 from events.system import EventSystem
-from events.events import EnteredCellEvent, LeftCellEvent, SkipTurnEvent, FacedWallEvent, FacedMonolithEvent
+from events.events import EnteredCellEvent, LeftCellEvent, SkipTurnEvent, FacedWallEvent, FacedMonolithEvent, \
+    TreasureFoundEvent
 
 
 # Load CLI. Initialize. Run game-loop.
@@ -36,12 +37,13 @@ class Engine(Singleton):
         world = WorldManager().get()
 
         traversable_cells = [cell for row in world.cells for cell in row if cell.type == CellType.Empty]
-        EventSystem().add_listeners(EnteredCellEvent(None, None), traversable_cells + [world.treasure])
-        EventSystem().add_listeners(LeftCellEvent(None, None), traversable_cells)
+        EventSystem().add_listeners(EnteredCellEvent(), traversable_cells)
+        EventSystem().add_listeners(LeftCellEvent(), traversable_cells)
+        EventSystem().add_listeners(TreasureFoundEvent(), traversable_cells)
 
-        # Only CLI handles these
-        EventSystem().add_listeners(FacedWallEvent(None, None), [])
-        EventSystem().add_listeners(FacedMonolithEvent(None, None), [])
+        # EventSystem().add_listeners(FacedWallEvent(), [])
+        # EventSystem().add_listeners(FacedMonolithEvent(), [])
+        # EventSystem().add_listeners(SkipTurnEvent(), [])
 
     @staticmethod
     def save_world():

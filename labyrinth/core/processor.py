@@ -1,8 +1,8 @@
 from common.base import Singleton
 from core.cli import CLI
-from entities.cells import Cell
-from entities.enum import CellType
-from entities.world import GameWorld, WorldManager
+from entities.cell import Cell
+from common.enum import CellType
+from core.manager import WorldManager
 from events.events import FacedWallEvent, FacedMonolithEvent
 from events.system import EventSystem
 
@@ -14,9 +14,8 @@ class CommandProcessor(Singleton):
         CLI().add_event_message('InitCommandProcessor')
 
     @staticmethod
-    def can_move_to(destination: Cell):
+    def can_move_to(destination: Cell) -> bool:
         player = WorldManager().get().player
-
         if destination is not None:
             if destination.type == CellType.Empty:
                 return True
@@ -30,19 +29,14 @@ class CommandProcessor(Singleton):
     @staticmethod
     def is_valid(command: str) -> bool:
         player = WorldManager().get().player
-
         if command == 'left':
             return CommandProcessor.can_move_to(player.cell.left)
-
         elif command == 'right':
             return CommandProcessor.can_move_to(player.cell.right)
-
         elif command == 'up':
             return CommandProcessor.can_move_to(player.cell.up)
-
         elif command == 'down':
             return CommandProcessor.can_move_to(player.cell.down)
-
         elif command == 'skip':
             pass
         elif command == 'save':

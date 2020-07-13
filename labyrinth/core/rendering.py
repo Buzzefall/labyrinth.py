@@ -5,7 +5,8 @@ from common.base import Singleton
 from common.utils import wrap_string
 
 from core.cli import CLI
-from entities.world import GameWorld, WorldManager
+from entities.world import GameWorld
+from core.manager import WorldManager
 
 
 class TextTile:

@@ -1,6 +1,9 @@
-from entities.enum import Direction
+from common.enum import Direction
 from entities.base import Entity
-from entities.cells import Cell
+from entities.cell import Cell
+from events.base import Listener, Event
+from events.events import EnteredCellEvent, TreasureFoundEvent
+from events.system import EventSystem
 
 
 class PlayerInventory(Entity):
@@ -41,3 +44,8 @@ class Player(Entity):
             self.cell = self.cell.up
         elif direction == Direction.DOWN:
             self.cell = self.cell.down
+
+        treasure = self.cell.find_treasure()
+        if treasure is not None:
+            self.inventory.add(treasure)
+            EventSystem().register(TreasureFoundEvent(treasure, target=self.cell))
