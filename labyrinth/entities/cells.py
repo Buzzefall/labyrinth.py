@@ -9,7 +9,7 @@ class Cell(Entity, Listener):
     def __init__(self, cell_type: CellType, x: int, y: int):
         super().__init__()
         self.type = cell_type
-        self.visible = True
+        self.visible = False
         self.x = x
         self.y = y
         self.up = None
