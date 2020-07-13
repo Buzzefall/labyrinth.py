@@ -23,11 +23,12 @@ class Engine(Singleton):
         CommandProcessor().init(config)
         EventSystem().init(config)
 
-        Engine.register_listeners()
         CLI().add_message('Finished initialization.')
 
     def make_new_world(self):
         self.init(self.config)
+        WorldManager().generate()
+        Engine.register_listeners()
         CLI().add_event_message('WorldCreated')
 
     @staticmethod
@@ -43,11 +44,18 @@ class Engine(Singleton):
         EventSystem().add_listeners(FacedMonolithEvent(None, None), [])
 
     @staticmethod
-    def save_the_world():
+    def save_world():
         WorldManager().save()
 
+    @staticmethod
+    def load_save():
+        WorldManager().load()
+        Engine.register_listeners()
+
     def run(self):
-        CLI().add_message('Good day, Player!')
+        WorldManager().generate()
+        Engine.register_listeners()
+        CLI().add_message('Good day, Player! Welcome to Labyrinth')
 
         dimensions = None
         while dimensions is None:
@@ -107,7 +115,10 @@ class Engine(Singleton):
             eventsys.register(SkipTurnEvent(player, player.cell))
 
         elif command == 'save':
-            Engine.save_the_world()
+            Engine.save_world()
+
+        elif command == 'load':
+            Engine.load_save()
 
         elif command == 'exit':
             return

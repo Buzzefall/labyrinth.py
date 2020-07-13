@@ -9,6 +9,7 @@ class Cell(Entity, Listener):
     def __init__(self, cell_type: CellType, x: int, y: int):
         super().__init__()
         self.type = cell_type
+        self.visible = True
         self.x = x
         self.y = y
         self.up = None
@@ -49,35 +50,37 @@ class Cell(Entity, Listener):
 
         return None
 
+    def reveal(self):
+        l, r, u, p = self.left, self.right, self.up, self.down
+        self.visible = True
+
+        for neighbour in (l, r, u, p, l.up, l.down, r.up, r.down):
+            neighbour.visible = True
+
     def receive(self, event: Event):
         if isinstance(event, EnteredCellEvent):
-            self.add_entity(event.source)
+            player = event.source
+            self.add_entity(player)
+
+            treasure = self.find_treasure()
+            if treasure is not None:
+                player.inventory.add(treasure)
+                self.entities.remove(treasure)
+
+            self.reveal()
         elif isinstance(event, LeftCellEvent):
             self.remove_entity(event.source)
 
     def __str__(self):
-        if self.type == CellType.Monolith:
-            return "▧ "
-        elif self.type == CellType.Wall:
-            return "# "
-        elif self.find_player():
-            return "℗ "
+        if self.find_player():
+            return '℗ '
         elif self.find_treasure():
-            return "⌛"
-        elif self.type == CellType.Empty:
-            return "  "
-#  ҉
+            return '⌛'
+        elif not self.visible or self.type == CellType.Empty:
+            return '  '
+        elif self.type == CellType.Monolith:
+            return '▧ '
+        elif self.type == CellType.Wall:
+            return '# '
 
-# class EmptyCell(Cell):
-#     def __init__(self, x: int, y: int):
-#         super().__init__(x, y)
-#
-#
-# class WallCell(Cell):
-#     def __init__(self, x: int, y: int):
-#         super().__init__(x, y)
-#
-#
-# class MonolithCell(Cell):
-#     def __init__(self, x: int, y: int):
-#         super().__init__(x, y)
+#  ҉

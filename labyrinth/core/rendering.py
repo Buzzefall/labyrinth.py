@@ -30,13 +30,11 @@ class TextTile:
         return TextTile(rows, max_width=max(self.width, other.width))
 
 
-# noinspection PyAttributeOutsideInit
+# noinspection PyAttributeOutsideInit,PyMethodMayBeStatic
 class Renderer(Singleton):
     def init(self, config: dict):
         self.config = config
         CLI().add_event_message('InitRenderer')
-        # world.history будет хранить отдельную свою историю
-        # и её можно рисовать отдельным тайлом
 
     def get_world_image(self) -> list:
         return [''.join(str(cell) for cell in row) for row in WorldManager().get().cells]

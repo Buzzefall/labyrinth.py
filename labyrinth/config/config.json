@@ -1,7 +1,8 @@
 {
   "cli": {
     "input_types": ["dimensions", "command"],
-    "commands": ["left", "right", "up", "down", "skip", "save", "exit"],
+    "commands": ["left", "right", "up", "down", "skip", "save", "load", "exit"],
+
     "messages": {
       "move": "Step executed. Entered cell ",
       "skip": "Skipped a turn. ",

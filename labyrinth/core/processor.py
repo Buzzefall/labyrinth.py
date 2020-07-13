@@ -47,6 +47,8 @@ class CommandProcessor(Singleton):
             pass
         elif command == 'save':
             pass
+        elif command == 'load':
+            pass
         elif command == 'exit':
             pass
 

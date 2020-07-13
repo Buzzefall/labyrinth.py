@@ -43,6 +43,7 @@ class CLI(Singleton, Listener):
                 numbers = int(numbers[0]), int(numbers[1])
                 if numbers[0] < 4 or numbers[0] > 10 or numbers[1] < 4 or numbers[1] > 10:
                     self.add_event_message('wrong_dimensions')
+                    return None
 
                 return numbers
 

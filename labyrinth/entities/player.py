@@ -6,7 +6,7 @@ from entities.cells import Cell
 class PlayerInventory(Entity):
     def __init__(self):
         super().__init__()
-        self.container = []
+        self.container = {}
 
     def search(self, item_name: str) -> list:
         return [item for item in self.container if item.name == item_name]
@@ -21,10 +21,8 @@ class PlayerInventory(Entity):
         self.container[item.name] = item
 
     def remove(self, item: Entity):
-        for i in self.container:
-            if i is item:
-                self.container.remove(i)
-                break
+        if item.name in self.container:
+            del self.container[item.name]
 
 
 class Player(Entity):

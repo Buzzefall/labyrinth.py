@@ -42,16 +42,11 @@ class GameWorld:
 # noinspection PyAttributeOutsideInit
 class WorldManager(Singleton):
     def init(self, config):
-        random.seed()
-
         self.config = config
         self.width = config['world']['width']
         self.height = config['world']['height']
 
         CLI().add_event_message('InitWorldManager')
-
-        self.cells = self.generate_empty()
-        self.world = self.generate()
 
     def save(self):
         if self.world is None:
@@ -66,21 +61,20 @@ class WorldManager(Singleton):
             success = False
             while not success:
                 try:
-                    pickle.dump(self.cells, save_file)
+                    pickle.dump(self.world, save_file)
                     CLI().add_message(f'Saved map with recursion limit {recursion_limit}')
                     success = True
                 except RecursionError:
                     recursion_limit += 1000
                     sys.setrecursionlimit(recursion_limit)
 
-    def load(self, save_name: Union[str, Path]):
-        if not save_name:
-            save_name = f'{os.getcwd()}/{self.config["paths"]["test_map"]}'
-
-        with open(f"{os.getcwd()}/{self.config['paths']['saves']}/{save_name}") as save_file:
+    # noinspection PyTypeChecker
+    def load(self):
+        save_path = os.getcwd() + '/' + self.config['paths']['saves']
+        last_save = sorted(Path(save_path).iterdir(), key=os.path.getmtime)[-1]
+        with open(last_save, 'rb') as save_file:
             self.world = pickle.load(save_file)
-
-        return self.world
+            self.init(self.world.config)
 
     @staticmethod
     def check_next(wall: Cell, next_cell: Cell, not_visited: list, find_visited: bool = False) -> bool:
@@ -217,11 +211,10 @@ class WorldManager(Singleton):
             WorldManager.explode(cells[y][x], random.randint(1, len(cells)) // 2)
 
         self.world = GameWorld(self.config, cells)
-        return self.world
 
     def get(self):
-        if self.world is not None:
+        if hasattr(self, 'world') and self.world is not None:
             return self.world
         else:
-            self.world = self.generate()
+            self.generate()
             return self.world
