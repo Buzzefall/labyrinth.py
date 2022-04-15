@@ -30,7 +30,7 @@ class WorldManager(Singleton):
             return
 
         dt = datetime.today()
-        save_name = f'Labyrinth - {str(dt)}.pickle'
+        save_name = f'Labyrinth_{dt.strftime("%d_%m_%Y__%H_%M_%S")}.pickle'
         file = f"{os.getcwd()}/{self.config['paths']['saves']}/{save_name}"
 
         with open(file, 'wb') as save_file:
